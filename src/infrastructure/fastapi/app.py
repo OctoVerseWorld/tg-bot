@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator, TypedDict
 
 import ngrok
+import sentry_sdk
 from aiogram import Bot
 from fastapi import FastAPI
 from starlette import status
@@ -59,6 +60,16 @@ async def lifespan(app_: FastAPI) -> AsyncIterator[None]:  # noqa: ARG001
 
 
 def create_app() -> FastAPI:
+    sentry_sdk.init(
+        dsn="https://c1fa741ba5005563f753fbae9a5dc180@o4508952916983808.ingest.de.sentry.io/4508952918556752",
+        # Add data like request headers and IP for users,
+        # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+        send_default_pii=True,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for tracing.
+        traces_sample_rate=1.0,
+    )
+
     app_ = FastAPI(
         title="TG Bot Service",
         version="1.0.0",
@@ -75,6 +86,10 @@ def create_app() -> FastAPI:
     )
 
     app_.get("/metrics")(lambda _: Response(status_code=status.HTTP_204_NO_CONTENT))
+
+    @app_.get("/sentry-debug")
+    async def trigger_error():
+        division_by_zero = 1 / 0
 
     app_.include_router(api_router)
     return app_
