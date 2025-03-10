@@ -74,6 +74,9 @@ def create_app() -> FastAPI:
         title="TG Bot Service",
         version="1.0.0",
         lifespan=lifespan,
+        docs_url=None if app_settings.ENVIRONMENT == 'production' else "/docs",
+        redoc_url=None if app_settings.ENVIRONMENT == 'production' else "/redoc",
+        openapi_url=None if app_settings.ENVIRONMENT == 'production' else "/openapi.json",
     )
 
     app_.add_middleware(
@@ -86,10 +89,6 @@ def create_app() -> FastAPI:
     )
 
     app_.get("/metrics")(lambda _: Response(status_code=status.HTTP_204_NO_CONTENT))
-
-    @app_.get("/sentry-debug")
-    async def trigger_error():
-        division_by_zero = 1 / 0
 
     app_.include_router(api_router)
     return app_
