@@ -43,7 +43,7 @@ async def lifespan(app_: FastAPI) -> AsyncIterator[None]:  # noqa: ARG001
         ngrok_url = await queue.get()
         webhook_url = ngrok_url + tg_api_settings.WEBHOOK_PATH
     else:
-        webhook_url = await app_settings.URL + tg_api_settings.WEBHOOK_PATH
+        webhook_url = app_settings.URL + tg_api_settings.WEBHOOK_PATH
     webhook_info = await bot.get_webhook_info()
     if webhook_info.url != webhook_url:
         await bot.set_webhook(
