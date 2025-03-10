@@ -1,0 +1,8 @@
+env
+venv
+.dockerignore
+Dockerfile
+Pipfile
+Pipfile.lock
+media
+static
