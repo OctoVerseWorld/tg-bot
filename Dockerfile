@@ -1,7 +1,7 @@
 ###########
 # BUILDER #
 ###########
-FROM python:3.13-slim as builder
+FROM python:3.13-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -14,8 +14,7 @@ RUN apt-get update && apt-get install -y git && apt-get clean && rm -rf /var/lib
 
 RUN pip install poetry && \
     poetry config virtualenvs.create false && \
-    poetry config experimental.system-git-client true && \
-    poetry install --no-dev --no-root
+    poetry install --no-root
 
 
 
